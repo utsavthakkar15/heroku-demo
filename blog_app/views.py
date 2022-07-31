@@ -2,7 +2,7 @@ from multiprocessing import context
 from django.shortcuts import render, redirect, HttpResponseRedirect, reverse
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
-from requests import ReadTimeout
+
 
 from blog_app.models import BlogCategory, BlogTags
 from .forms import CreateUserForm
