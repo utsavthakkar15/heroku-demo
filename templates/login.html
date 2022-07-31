@@ -1,0 +1,18 @@
+{% comment %} {% extends "base.html" %} {% endcomment %}
+{% load static%}
+{% comment %} {% block content %} {% endcomment %}
+
+<div>
+  <h3 class="menu-right">login<span class="new">page</span></h3>
+  <div class="sign-right">
+    <div class="menu-right">
+      <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" />
+        <input type="password" name="password" placeholder="Password" />
+        <input type="submit" name="" value="Login" />
+      </form>
+    </div>
+  </div>
+</div>
+{% comment %} {% endblock %} {% endcomment %}

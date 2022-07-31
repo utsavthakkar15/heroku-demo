@@ -1,0 +1,16 @@
+{% load static %}
+<div>
+  <h3 class="menu-right">
+    Regestation<span class="new" style="background: #1dd8df">page</span>
+  </h3>
+  <div class="sign-right">
+    <div class="menu-right">
+      <form method="POST" action="/signup/">
+        {% csrf_token %} 
+        {{form.as_p }}
+
+        <input type="submit" value="CREATE ACCOUNT" />
+      </form>
+    </div>
+  </div>
+</div>
