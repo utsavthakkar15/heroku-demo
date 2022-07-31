@@ -1,10 +1,10 @@
 from multiprocessing import context
-from django.shortcuts import render, redirect, HttpResponseRedirect, reverse
+from django.shortcuts import get_object_or_404, render, redirect, HttpResponseRedirect, reverse
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
 
 
-from blog_app.models import BlogCategory, BlogTags
+from blog_app.models import Blog, BlogCategory, BlogTags
 from .forms import CreateUserForm
 
 # Create your views here.
@@ -50,11 +50,13 @@ def signup(request):
 def index(request):
     blog_category_display=BlogCategory.objects.all().order_by('-categoty_id')
     blog_tag_display=BlogTags.objects.all().order_by('-tag_id')
+    blogs=Blog.objects.all().values('blog_category__categoty_type','blog_image','blog_tilte','created_at','slug')
     context={
         'blog_category_display':blog_category_display,
-        'blog_tag_display':blog_tag_display
+        'blog_tag_display':blog_tag_display,
+        'blog':blogs,
     }
-    print(context)
+    
     return render(request,'index.html',context)
 
 def blog_category(request,slug):
@@ -81,5 +83,13 @@ def contact(request):
     return render(request,'contact.html')
 
 
-def postdetail(request):
-    return render(request,'post_details.html')
+def blogdetail(request,slug):
+    blog=get_object_or_404(Blog,slug=slug)
+    
+    context={
+        'blog':blog,
+        
+        
+    }
+    
+    return render(request,'post_details.html',context)
