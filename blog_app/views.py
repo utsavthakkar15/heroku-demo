@@ -1,6 +1,10 @@
+from multiprocessing import context
 from django.shortcuts import render, redirect, HttpResponseRedirect, reverse
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
+from requests import ReadTimeout
+
+from blog_app.models import BlogCategory, BlogTags
 from .forms import CreateUserForm
 
 # Create your views here.
@@ -44,9 +48,27 @@ def signup(request):
 
 
 def index(request):
-    return render(request,'index.html')
+    blog_category_display=BlogCategory.objects.all().order_by('-categoty_id')
+    blog_tag_display=BlogTags.objects.all().order_by('-tag_id')
+    context={
+        'blog_category_display':blog_category_display,
+        'blog_tag_display':blog_tag_display
+    }
+    print(context)
+    return render(request,'index.html',context)
 
-
+def blog_category(request,slug):
+    blog_category=BlogCategory.objects.get(slug=slug)
+    context={
+        'blog_category':blog_category
+    }
+    return render(request,'base.html',context)
+def blog_tags(request,slug):
+    blog_tags=BlogTags.objects.get(slug=slug)
+    context={
+        'blog_tag':blog_tags
+    }
+    return render(request,'base.html',context)
 def about(request):
     return render(request,'about.html')
 
