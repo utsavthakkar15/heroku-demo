@@ -2,15 +2,13 @@ from multiprocessing import context
 from django.shortcuts import get_object_or_404, render, redirect, HttpResponseRedirect, reverse
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
-
-
 from blog_app.models import Blog, BlogCategory, BlogTags
-from .forms import CreateUserForm
+from .forms import CreateUserForm, AddBlog
 
 # Create your views here.
 
 def base(request):
-    return render(request,'base.html')
+    return render(request, 'base.html')
 
 
 def login(request):
@@ -50,7 +48,7 @@ def signup(request):
 def index(request):
     blog_category_display=BlogCategory.objects.all().order_by('-categoty_id')
     blog_tag_display=BlogTags.objects.all().order_by('-tag_id')
-    blogs=Blog.objects.all().values('blog_category__categoty_type','blog_image','blog_tilte','created_at','slug')
+    blogs=Blog.objects.all().values('blog_category__categoty_type','blog_image','blog_tilte','created_at','slug').order_by('-blog_id')
     context={
         'blog_category_display':blog_category_display,
         'blog_tag_display':blog_tag_display,
@@ -93,3 +91,13 @@ def blogdetail(request,slug):
     }
     
     return render(request,'post_details.html',context)
+
+
+def add_blog(request):
+    context = {}
+    user = request.user
+    form = AddBlog(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+    context['form'] = form
+    return render(request, 'addblog.html', context)

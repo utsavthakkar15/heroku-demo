@@ -49,7 +49,7 @@
                     </div>
                     <div class="down-content">
                       <span>{{i.blog_category__categoty_type}}</span>
-                      <a href="post-details.html"><h4>{{i.blog_tilte}}</h4></a>
+                      <a href="{% url 'blogdetail' i.slug %}"><h4>{{i.blog_tilte}}</h4></a>
                       <ul class="post-info">
                         <li><a href="#">Admin</a></li>
                         <li><a href="#">{{i.created_at}}</a></li>
