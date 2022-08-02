@@ -80,11 +80,7 @@
                 </div>
                 {% endfor %}
                 
-                <div class="col-lg-12">
-                  <div class="main-button">
-                    <a href="blog.html">View All Posts</a>
-                  </div>
-                </div>
+                
               </div>
             </div>
           </div>
@@ -145,6 +141,29 @@
               </div>
             </div>
           </div>
+        </div>
+        <div >
+          <nav class="navigation">
+                {% if paginate.has_other_pages %}
+                   {% if paginate.has_previous %}
+                    <a href="?page=1" class="">First</a>
+                    {% endif %}
+      
+      
+                   {% for i in paginate.paginator.page_range %}
+                   {% if paginate.number == i %}
+                   <span>{{ i }}</span>
+                   {% else %}
+                <a href="?page={{i}}" class="page-numbers bg-border-color" style="margin-left:10px;">{{i}}</a>
+                   {% endif %}
+                  {% endfor %}
+                  {% if paginate.has_next %}
+                  <a href="?page={{ paginate.paginator.num_pages }}">Last</a>
+                  {% endif %}
+                {% endif %}
+            </center>
+                  </nav>
+      
         </div>
       </div>
     </section>

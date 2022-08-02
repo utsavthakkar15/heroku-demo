@@ -6,6 +6,8 @@ from django.shortcuts import (
     HttpResponseRedirect,
     reverse,
 )
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
+
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login as dj_login
 from blog_app.models import Blog, BlogCategory, BlogTags, Comment
@@ -61,6 +63,7 @@ def signup(request):
 def index(request):
     blog_category_display = BlogCategory.objects.all().order_by("-categoty_id")
     blog_tag_display = BlogTags.objects.all().order_by("-tag_id")
+    page = request.GET.get('page',1)
     blogs = (
         Blog.objects.all()
         .values(
@@ -74,10 +77,22 @@ def index(request):
         )
         .order_by("-blog_id")
     )
+    paginator = Paginator(blogs, 4)
+
+    try:
+
+        blogs = paginator.page(page)
+    except PageNotAnInteger:
+        blogs = paginator.page(1)
+    except EmptyPage:
+        blogs = paginator.page(paginator.num_pages)
+
+
     context = {
         "blog_category_display": blog_category_display,
         "blog_tag_display": blog_tag_display,
         "blog": blogs,
+        'paginate':blogs,
     }
 
     return render(request, "index.html", context)
