@@ -20,9 +20,9 @@
                 </div>
                 <a href="{% url 'blogdetail' i.slug %}"><h4>{{i.blog_tilte}}</h4></a>
                 <ul class="post-info">
-                  <li><a href="#">Admin</a></li>
-                  <li><a href="#">{{i.created_at}}</a></li>
-                  <li><a href="#">12 Comments</a></li>
+                  <li><a href="">{{i.created_by__username}}</a></li>
+                  <li><a href="">{{i.created_at}}</a></li>
+                  
                 </ul>
               </div>
             </div>
@@ -52,9 +52,9 @@
                       <span>{{i.blog_category__categoty_type}}</span>
                       <a href="{% url 'blogdetail' i.slug %}"><h4>{{i.blog_tilte}}</h4></a>
                       <ul class="post-info">
-                        <li><a href="#">Admin</a></li>
+                        <li><a href="#">{{i.created_by__username}}</a></li>
                         <li><a href="#">{{i.created_at}}</a></li>
-                        <li><a href="#">12 Comments</a></li>
+                        
                       </ul>
                       <p>{{i.blog_tagLine}}</p>
                       <div class="post-options">
@@ -62,8 +62,8 @@
                           <div class="col-6">
                             <ul class="post-tags">
                               <li><i class="fa fa-tags"></i></li>
-                              <li><a href="#">Beauty</a>,</li>
-                              <li><a href="#">Nature</a></li>
+                              <li><a href="{% url 'tag' i.slug %}">{{i.blog_tag__tag_name}}</a></li>
+                              
                             </ul>
                           </div>
                           <div class="col-6">

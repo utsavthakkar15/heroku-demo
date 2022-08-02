@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% for i in blog %}
+          <div class="item">
+            <img src="/documents/{{i.blog_image}}" alt="" style="height:350px;">
+            <div class="item-content">
+              <div class="main-content">
+                <div class="meta-category">
+                  
+                  <span>{{i.blog_category__categoty_type}}</span>
+                  
+                </div>
+                <a href="{% url 'blogdetail' i.slug %}"><h4>{{i.blog_tilte}}</h4></a>
+                <ul class="post-info">
+                  <li><a href="#">Admin</a></li>
+                  <li><a href="#">{{i.created_at}}</a></li>
+                  <li><a href="#">12 Comments</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endfor%}
+          
+        </div>
+{% endblock %}

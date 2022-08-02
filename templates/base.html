@@ -69,7 +69,15 @@ https://templatemo.com/tm-551-stand-blog
                 <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
               </li>
               <li class="nav-item">
+                <a class="log_name" style="color: black;">
+                  {% if request.user.is_authenticated %}
+                  Hello {{ request.user.username }}
+                </a>
+                <a href="{% url 'logout' %}" ><span style="color:black;">Logout </span></a>
+                {% else %}
+                {% comment %} <a href="{% url 'login' %}" ><span style="color:#ffffff;">Login </span></a> {% endcomment %}
                 <a class="nav-link" href="{% url 'login' %}">Login</a>
+                {% endif %}
               </li>
               
               

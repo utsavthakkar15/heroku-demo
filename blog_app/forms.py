@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Blog
+from .models import Blog, Comment, ContactUs
 
 
 class CreateUserForm(UserCreationForm):
@@ -33,3 +33,14 @@ class AddBlog(forms.ModelForm):
             "blog_category",
             "blog_tag",
         )
+class CommentForm(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = ('name', 'email', 'body')
+
+class ContactusForm(forms.ModelForm):
+
+    class Meta:
+        model=ContactUs
+        fields='__all__'

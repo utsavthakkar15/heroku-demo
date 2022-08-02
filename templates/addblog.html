@@ -1,6 +1,8 @@
-{% load static%} 
+{% extends "base.html" %}
+{% load static%}
+{% block content %}
 
-  <div>
+  <div style="padding-top:10%; padding-left:10%;">
     <div class="albums">
       <div class="tittle-head">
         <h3 class="menu-right">Add Blog</h3>
@@ -9,7 +11,9 @@
             <form method="POST" enctype="multipart/form-data">
               {% csrf_token %} 
               {{ form.as_p }}
-              <input type="submit" value="Upload Blog" />
+              
+              <input type="submit" value="Upload Blog" style="width:50%;" />
+              
             </form>
           </div>
         </div>
@@ -17,3 +21,4 @@
     </div>
   </div>
 </div>
+{% endblock %}

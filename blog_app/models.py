@@ -4,8 +4,9 @@ from django.utils.text import slugify
 from django.urls import reverse
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from ckeditor.fields import RichTextField
 
+from ckeditor.fields import RichTextField
+from django.contrib.auth.models import User
 # Create your models here.
 
 
@@ -65,7 +66,11 @@ class Blog(models.Model):
     blog_image=models.ImageField(upload_to='documents/blogimages/')
     blog_tagLine=models.CharField(max_length=500)
     blog_category=models.ManyToManyField(BlogCategory,default='',blank=True,related_name='blogcateg')
+    likes=models.ManyToManyField(User,default='',blank=True,related_name="likes")
+    dislike = models.ManyToManyField(User, related_name='dislikes', blank=True, default='')
+
     blog_tag=models.ManyToManyField(BlogTags,default='',blank=True)
+    created_by=models.ForeignKey(User,on_delete=models.CASCADE)
     blog_tagLine=models.CharField(max_length=500)
     slug=slug=models.SlugField(unique=True,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -88,3 +93,29 @@ def create_slug(sender, instance, created, **kwargs):
     if created:
             instance.slug=instance.blog_tilte
             instance.save()
+
+class Comment(models.Model):
+    blog = models.ForeignKey(Blog,on_delete=models.CASCADE,related_name='comment')
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['created_on']
+
+    def __str__(self):
+        return 'comment {} by {}'.format(self.body, self.name)
+
+    def save(self, *args, **kwargs):
+        super(Comment, self).save(*args, **kwargs)
+
+class ContactUs(models.Model):
+    name = models.CharField(max_length=20, null=True, blank=True)
+    email = models.EmailField()
+    subject = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(max_length=1000, null=True, blank=True)
+
+    def _str_(self):
+        return(self.name)

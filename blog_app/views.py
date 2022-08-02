@@ -7,9 +7,12 @@ from django.shortcuts import (
     reverse,
 )
 from django.http import HttpResponse
-from django.contrib.auth import login, authenticate
-from blog_app.models import Blog, BlogCategory, BlogTags
-from .forms import CreateUserForm, AddBlog
+from django.contrib.auth import authenticate, login as dj_login
+from blog_app.models import Blog, BlogCategory, BlogTags, Comment
+from .forms import CommentForm, ContactusForm, CreateUserForm, AddBlog
+from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -28,7 +31,7 @@ def login(request):
         print(user)
         if user:
             if user.is_active:
-                # login(request,user)
+                dj_login(request, user)
                 return HttpResponseRedirect(reverse("index"))
             else:
                 return HttpResponse("Your account is not active.")
@@ -48,7 +51,7 @@ def signup(request):
             raw_password = form.cleaned_data.get("password1")
             email = form.cleaned_data.get("email")
             user = authenticate(username=username, password=raw_password)
-            # login(request, user)
+            dj_login(request, user)
             return redirect("login")
     else:
         form = CreateUserForm()
@@ -65,7 +68,9 @@ def index(request):
             "blog_image",
             "blog_tilte",
             "created_at",
+            "created_by__username",
             "slug",
+            "blog_tag__tag_name",
         )
         .order_by("-blog_id")
     )
@@ -80,14 +85,18 @@ def index(request):
 
 def blog_category(request, slug):
     blog_category = BlogCategory.objects.get(slug=slug)
-    context = {"blog_category": blog_category}
-    return render(request, "base.html", context)
+    blog=Blog.objects.filter(blog_category=blog_category)
+    print(blog)
+    context = {"blog_category": blog_category,'blog':blog}
+    return render(request, "see_all_category.html", context)
 
 
 def blog_tags(request, slug):
     blog_tags = BlogTags.objects.get(slug=slug)
-    context = {"blog_tag": blog_tags}
-    return render(request, "base.html", context)
+    blog=Blog.objects.filter(blog_tag=blog_tags)
+    context = {"blog_tag": blog_tags,"blog":blog}
+
+    return render(request, "see_all_tag.html", context)
 
 
 def about(request):
@@ -99,24 +108,81 @@ def blog(request):
 
 
 def contact(request):
-    return render(request, "contact.html")
+    if request.method=='POST':
+        form=ContactusForm(data=request.POST)
+
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/')
+    else:
+        form = ContactusForm()
+    return render(request, "contact.html", {'form':form})
+    
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 
 def blogdetail(request, slug):
     blog = get_object_or_404(Blog, slug=slug)
+    comments = Comment.objects.filter(blog=blog)
+    print(comments)
+    is_liked = False
+    is_dislike = False
+    if blog.likes.filter(id=request.user.id).exists():
+        is_liked = True
+    if blog.dislike.filter(id=request.user.id).exists():
 
+        is_dislike = True
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            # Create Comment object but don't save to database yet
+
+            # Assign the current post to the comment
+            comment_form.instance.blog = blog
+            # Save the comment to the database
+            comment_form.save()
+    else:
+        comment_form = CommentForm()
     context = {
+        "is_dislike":is_dislike,
+        "is_liked":is_liked,
         "blog": blog,
+        "comment_form":comment_form,
+        "comments":comments,
     }
+    if is_ajax(request=request):
+        html = render_to_string('comment.html', context, request=request)
+        return JsonResponse({'form': html})
 
     return render(request, "post_details.html", context)
+@login_required
+def video_liked(request,slug):
 
+    blog=get_object_or_404(Blog,slug=slug)
+    is_liked=False
+    is_dislike = False
+    
+    if blog.likes.filter(id=request.user.id).exists():
+        blog.likes.remove(request.user)
+        blog.dislike.add(request.user)
+        is_dislike = True
+        is_liked = False
+
+        
+        is_liked = False
+    else:
+        blog.likes.add(request.user)
+        is_liked = True
+
+    return HttpResponseRedirect(blog.get_absolute_url())
 
 def add_blog(request):
     context = {}
     user = request.user
     form = AddBlog(request.POST or None, request.FILES or None)
     if form.is_valid():
+        form.instance.created_by=user
         form.save()
     context["form"] = form
     return render(request, "addblog.html", context)
