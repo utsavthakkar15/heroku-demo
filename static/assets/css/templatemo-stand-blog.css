@@ -1082,7 +1082,7 @@ footer p a:hover {
     .navbar .navbar-nav .nav-link.active,
     .navbar .navbar-nav .nav-link.show,
     .navbar .navbar-nav .show>.nav-link {
-        color: #f48840!important;
+        color: #000000!important;
         border-bottom: none!important;
         padding-bottom: 15px;
     }
